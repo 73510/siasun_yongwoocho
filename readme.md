@@ -1,23 +1,9 @@
-# Sia’s portfolio
+# Sia’s portfolio · Legacy
 
-Notion을 콘텐츠 소스로 사용하는 Sia의 포트폴리오입니다.
+이 저장소의 별도 배포는 2026-09-14에 종료했습니다.
 
 - Production: <https://siasun.yongwoocho.com>
-- Content: `site.config.ts`에 지정된 공개 Notion 페이지
-- Hosting: Vercel
+- Runtime: [`yongwoocho.com`](https://yongwoocho.com)의 단일 Next.js/Vercel 앱
+- Content: 기존 공개 Notion 페이지
 
-## Development
-
-```bash
-pnpm install
-pnpm dev
-```
-
-배포 전 검증:
-
-```bash
-pnpm test
-pnpm build
-```
-
-이 프로젝트는 [Next.js Notion Starter Kit](https://github.com/transitive-bullshit/nextjs-notion-starter-kit)을 기반으로 합니다.
+이 코드는 이전 구현의 기록으로만 보관합니다. 현재 도메인 라우팅과 UI는 메인 저장소에서 관리합니다.
