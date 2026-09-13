@@ -1,7 +1,8 @@
 import { type GetStaticProps } from 'next'
+import { uuidToId } from 'notion-utils'
 
 import { NotionPage } from '@/components/NotionPage'
-import { domain, isDev } from '@/lib/config'
+import { domain, isDev, rootNotionPageId } from '@/lib/config'
 import { getSiteMap } from '@/lib/get-site-map'
 import { resolveNotionPage } from '@/lib/resolve-notion-page'
 import { type PageProps, type Params } from '@/lib/types'
@@ -14,7 +15,11 @@ export const getStaticProps: GetStaticProps<PageProps, Params> = async (
   try {
     const props = await resolveNotionPage(domain, rawPageId)
 
-    return { props, revalidate: 10 }
+    if (props.error?.statusCode === 404) {
+      return { notFound: true, revalidate: 3600 }
+    }
+
+    return { props, revalidate: 3600 }
   } catch (err) {
     console.error('page error', domain, rawPageId, err)
 
@@ -28,23 +33,23 @@ export async function getStaticPaths() {
   if (isDev) {
     return {
       paths: [],
-      fallback: true
+      fallback: 'blocking'
     }
   }
 
   const siteMap = await getSiteMap()
 
   const staticPaths = {
-    paths: Object.keys(siteMap.canonicalPageMap).map((pageId) => ({
-      params: {
-        pageId
-      }
-    })),
-    // paths: [],
-    fallback: true
+    paths: Object.entries(siteMap.canonicalPageMap)
+      .filter(([, pageId]) => uuidToId(pageId) !== rootNotionPageId)
+      .map(([pageId]) => ({
+        params: {
+          pageId
+        }
+      })),
+    fallback: 'blocking'
   }
 
-  console.log(staticPaths.paths)
   return staticPaths
 }
 

@@ -3,11 +3,11 @@ import styles from './styles.module.css'
 export function GitHubShareButton() {
   return (
     <a
-      href='https://github.com/transitive-bullshit/nextjs-notion-starter-kit'
+      href='https://github.com/73510/siasun_yongwoocho'
       target='_blank'
       rel='noopener noreferrer'
       className={styles.githubCorner}
-      aria-label='View source on GitHub'
+      aria-label='View site source on GitHub'
     >
       <svg
         width='80'

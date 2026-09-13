@@ -1,4 +1,5 @@
 import type { GetServerSideProps } from 'next'
+import { uuidToId } from 'notion-utils'
 
 import type { SiteMap } from '@/lib/types'
 import { host } from '@/lib/config'
@@ -31,28 +32,23 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   }
 }
 
-const createSitemap = (siteMap: SiteMap) =>
-  `<?xml version="1.0" encoding="UTF-8"?>
+const createSitemap = (siteMap: SiteMap) => {
+  const pageUrls = Object.entries(siteMap.canonicalPageMap)
+    .filter(([, pageId]) => uuidToId(pageId) !== siteMap.site.rootNotionPageId)
+    .map(([canonicalPagePath]) => `${host}/${canonicalPagePath}`)
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url>
-      <loc>${host}</loc>
-    </url>
-
-    <url>
-      <loc>${host}/</loc>
-    </url>
-
-    ${Object.keys(siteMap.canonicalPageMap)
-      .map((canonicalPagePath) =>
-        `
-          <url>
-            <loc>${host}/${canonicalPagePath}</loc>
-          </url>
-        `.trim()
+    ${[host, ...pageUrls]
+      .map(
+        (url) => `<url>
+      <loc>${url}</loc>
+    </url>`
       )
-      .join('')}
+      .join('\n    ')}
   </urlset>
 `
+}
 
 export default function noop() {
   return null
